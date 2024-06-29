@@ -26,12 +26,10 @@ def entrar(bot):
     botao_autenticar.click()
     
     campo_user = bot.find_element('//*[@id="username"]', By.XPATH)
-    campo_user.send_keys('15458345000241')
-    # campo_user.send_keys('15458345000160') # matriz
+    campo_user.send_keys(os.getenv('LOGIN'))
     
     campo_senha = bot.find_element('//*[@id="password"]', By.XPATH)
-    campo_senha.send_keys('290795can2')
-    # campo_senha.send_keys('290795cana') # matriz
+    campo_senha.send_keys(os.getenv('SENHA'))
     
     botao_entrar = bot.find_element('//*[@id="mainContent"]/div/form/input[5]', By.XPATH)
     botao_entrar.click()
@@ -50,7 +48,7 @@ def main():
     mes = 'JUNHO'
     
     ANO = '2024'
-    download_folder_path=r'C:\Users\novoa\OneDrive\Área de Trabalho\notas_MB\NOTA_FISCAL_ZS_MAPLE_BEAR\JUNHO2024'
+    download_folder_path=os.getenv('DOWNLOAD_FOLDER_PATH')
     
     # data_geracao = input('Data Geração: ')
     # mes = input('Mês: ')
@@ -59,8 +57,8 @@ def main():
     bot = WebBot()
     bot.headless = False
     bot.browser = Browser.CHROME
-    bot.driver_path = r"C:\Users\novoa\OneDrive\Área de Trabalho\drivers\chromedriver-win64\chromedriver.exe"
-    profile_path = r"C:\Users\novoa\AppData\Local\Google\Chrome\User Data"
+    bot.driver_path = os.getenv('BOT_DRIVER_PATH')
+    profile_path = os.getenv('PROFILE_PATH')
 
     def_options = default_options(
         user_data_dir=profile_path,  # Inform the profile path that wants to start the browser
