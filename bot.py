@@ -6,6 +6,9 @@ import os
 from unidecode import unidecode
 from pyautogui import alert, confirm
 from dotenv import load_dotenv
+from pywinauto.application import Application
+from pywinauto.findwindows import find_window
+
 
 
 load_dotenv()
@@ -42,14 +45,28 @@ def sair(bot):
     voltar_pag_inicial.click()
 
 
+def trazer_janela_para_frente(titulo):
+    try:
+        # Localiza a janela pelo título
+        hwnd = find_window(title=titulo)
+        app = Application().connect(handle=hwnd)
+        janela = app.window(handle=hwnd)
+        # Traz a janela para frente
+        janela.set_focus()
+        return janela
+    except Exception as e:
+        print(f"Erro ao trazer a janela para frente: {e}")
+        return None
+
+
 def main():
 
-    data_geracao = '27062024'
+    data_geracao = '30062024'
     mes = 'JUNHO'
     
     ANO = '2024'
-    download_folder_path=os.getenv('DOWNLOAD_FOLDER_PATH')
     
+    download_folder_path=os.getenv('DOWNLOAD_FOLDER_PATH')
     # data_geracao = input('Data Geração: ')
     # mes = input('Mês: ')
 
@@ -80,8 +97,9 @@ def main():
     campo_geracao.send_keys(data_geracao)
     bot.enter()
     bot.wait(3000)
-
+    
     for cliente in dados.itertuples():
+        
         try:
             ################### CPF ###################
             campo_cpf = bot.find_element('//*[@id="form:numDocumento"]', By.XPATH)
@@ -115,11 +133,11 @@ def main():
             campo_descricao = bot.find_element('//*[@id="form:descriminacaoServico"]', By.XPATH)
             campo_descricao.send_keys(texto_descricao)
 
-            # if cliente.Acumulador == '1':
-            #     opcao_turma = bot.find_element('//*[@id="form:codigoCnae"]', By.XPATH)
-            #     opcao_turma.click()
-            #     bot.type_up()
-            #     bot.enter()
+            if cliente.Acumulador == '1':
+                opcao_turma = bot.find_element('//*[@id="form:codigoCnae"]', By.XPATH)
+                opcao_turma.click()
+                bot.type_up()
+                bot.enter()
 
             ################### VALOR ###################
             # bot.wait(1000)
@@ -138,26 +156,21 @@ def main():
             
             bot.wait(1000)
 
-            # if not bot_desktop.find("janela_certificado_matriz", matching=0.97, waiting_time=10000):
-            #     not_found("janela_certificado_matriz")
-            # bot_desktop.click()
-            if not bot_desktop.find("janela_certificado_selecionado", matching=0.97, waiting_time=10000):
-                not_found("janela_certificado_selecionado")
-                # if not bot_desktop.find("janela_certificado", matching=0.97, waiting_time=10000):
-                #     not_found("janela_certificado")
-                    
-            # bot_desktop.click()
-            # bot_desktop.kb_type('123456') # matriz
-            bot_desktop.kb_type('1234')
+            janela = trazer_janela_para_frente('Logon do Token')
+            while janela == None:
+                janela = trazer_janela_para_frente('Logon do Token')
+
+            bot_desktop.kb_type('123456') # matriz
+            # bot_desktop.kb_type('1234')
             bot_desktop.enter()
-            bot.wait(5000)
+            bot.wait(3000)
             
-            botao_download = bot.find_element('//*[@id="form"]/input[2]', By.XPATH)
+            botao_download = bot.find_element('//*[@id="form"]/input[2]', By.XPATH, ensure_clickable=True, ensure_visible=True)
             # bot.wait_for_element_visibility(botao_download)
             botao_download.click()
-            bot.wait(3000)
-            num_nota = bot.get_last_created_file(download_folder_path).split(os.sep)[-1].split('.')[0][-3:]
-            
+            bot.wait(1000)
+            num_nota = bot.get_last_created_file(download_folder_path).split(os.sep)[-1].split('.')[0][-4:]
+
             with open(arquivo_notas, 'a') as f:
                 f.write(f'{num_nota} {cliente.ResponsávelFinanceiro}')
                 f.write('\n')
