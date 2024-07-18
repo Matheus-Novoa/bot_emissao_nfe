@@ -67,8 +67,6 @@ def main():
     ANO = '2024'
     
     download_folder_path=os.getenv('DOWNLOAD_FOLDER_PATH')
-    # data_geracao = input('Data Geração: ')
-    # mes = input('Mês: ')
 
     bot_desktop = DesktopBot()
     bot = WebBot()
@@ -107,7 +105,6 @@ def main():
             campo_cpf.send_keys(cliente.CPF)
             botao_lupa = bot.find_element('//*[@id="form:btAutoCompleteTomador"]', By.XPATH)
             botao_lupa.click()
-            # bot.wait(3000)
             
             if bot.find("erro_cpf_nao_encontrado", matching=0.97, waiting_time=1500):
                 not_found("erro_cpf_nao_encontrado")
@@ -156,12 +153,12 @@ def main():
             
             bot.wait(1000)
 
-            janela = trazer_janela_para_frente('Logon do Token')
+            nome_janela = 'Logon do Token'
+            janela = trazer_janela_para_frente(nome_janela)
             while janela == None:
-                janela = trazer_janela_para_frente('Logon do Token')
+                janela = trazer_janela_para_frente(nome_janela)
 
-            bot_desktop.kb_type('123456') # matriz
-            # bot_desktop.kb_type('1234')
+            bot_desktop.kb_type('123456')
             bot_desktop.enter()
             bot.wait(3000)
             
