@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 # arquivo_planilha = filedialog.askopenfilename()
-arquivo_planilha = Path(r"C:\Users\novoa\OneDrive\Área de Trabalho\notas_MB\planilhas\zona_norte\escola_canadenseZN_ago24\Maple Bear Ago 24.xlsx")
+arquivo_planilha = Path(r"C:\Users\novoa\OneDrive\Área de Trabalho\notas_MB\planilhas\zona_norte\escola_canadenseZN_set24\Maple Bear Set 24.xlsx")
 arquivo_progresso = arquivo_planilha.parent / 'progresso.log'
 arquivo_notas = arquivo_planilha.parent / 'num_notas.txt'
 dados = pd.read_excel(arquivo_planilha, 'dados', header=1)

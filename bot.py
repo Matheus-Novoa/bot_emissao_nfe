@@ -4,7 +4,7 @@ from botcity.web.browsers.chrome import default_options
 from dados import *
 import os
 from unidecode import unidecode
-from pyautogui import confirm
+from pyautogui import confirm, alert
 from dotenv import load_dotenv
 from pywinauto.application import Application
 from pywinauto.findwindows import find_window
@@ -66,8 +66,8 @@ def trazer_janela_para_frente(titulo):
 
 def main():
 
-    data_geracao = '31082024'
-    mes = 'AGOSTO'
+    data_geracao = '30092024'
+    mes = 'SETEMBRO'
     
     ANO = '2024'
     
@@ -118,9 +118,10 @@ def main():
                     break
                 except ElementClickInterceptedException:
                     continue
-            # if bot.find("erro_cpf_nao_encontrado", matching=0.97, waiting_time=1500):
-            #     not_found("erro_cpf_nao_encontrado")
-            #     alert(title='CPF não cadastrado. Preencha manualmente')
+            
+            if bot.find("erro_cpf_nao_encontrado", matching=0.97, waiting_time=1500):
+                not_found("erro_cpf_nao_encontrado")
+                alert(title='CPF não cadastrado. Preencha manualmente')
 
             nome_responsavel_dados = unidecode(cliente.ResponsávelFinanceiro.upper().strip())
             campo_razao_social = bot.find_element('//*[@id="form:dnomeRazaoSocial"]',
