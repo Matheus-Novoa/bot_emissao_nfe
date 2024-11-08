@@ -66,8 +66,8 @@ def trazer_janela_para_frente(titulo):
 
 def main():
 
-    data_geracao = '30092024'
-    mes = 'SETEMBRO'
+    data_geracao = '31102024'
+    mes = 'OUTUBRO'
     
     ANO = '2024'
     
