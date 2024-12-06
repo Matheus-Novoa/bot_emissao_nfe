@@ -60,21 +60,26 @@ def main(dataGeracao):
 if __name__ == '__main__':
     arquivoCache = '.cache'
 
-
     janela = ctk.CTk()
     janela.geometry('500x200')
+    janela.title('Emitir Notas MB')
 
-    dataGeracao = ctk.CTkEntry(janela, placeholder_text='Data de emissão')
-    dataGeracao.pack()
+    padx = 10
+    pady= 5
+    entryWidth = 180
 
-    botao = ctk.CTkButton(janela, text='Iniciar', command=lambda: main(dataGeracao))
+    #------------------------ Data Geração ------------------------
+    dataGeracaoEntrada = ctk.CTkEntry(janela, placeholder_text='Data de emissão')
+    dataGeracaoEntrada.pack()
+
+    botao = ctk.CTkButton(janela, text='Iniciar', command=lambda: main(dataGeracaoEntrada))
     botao.pack()
 
     try:
         with open(arquivoCache) as f:
             dados = json.load(f)
-            dataGeracao.delete(0, ctk.END)
-            dataGeracao.insert(0, dados['data'])
+            dataGeracaoEntrada.delete(0, ctk.END)
+            dataGeracaoEntrada.insert(0, dados['data'])
     except FileNotFoundError:
         ...
     except json.decoder.JSONDecodeError:
@@ -83,7 +88,7 @@ if __name__ == '__main__':
     def gravar_cache():
         with open(arquivoCache, 'w') as f:
             dados = {
-                'data': dataGeracao.get()
+                'data': dataGeracaoEntrada.get()
             }
             json.dump(dados, f)
         janela.destroy()
