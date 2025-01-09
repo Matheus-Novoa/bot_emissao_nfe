@@ -2,11 +2,15 @@ from dados import Dados
 from datetime import datetime
 from bot_lib import Bot
 from config import credentials
+from dotenv import load_dotenv
+import os
+import time
 
 
 
 def main(dataGeracao, pastaDownload, arqPlanilha, sedes):
 
+    load_dotenv()
     dados = Dados(arqPlanilha)
 
     if dados.arquivo_progresso.exists():
@@ -34,12 +38,14 @@ def main(dataGeracao, pastaDownload, arqPlanilha, sedes):
     ANO = str(data.year)
 
     bot = Bot()
-    bot.bot_setup(pastaDownload)
+    bot.bot_setup(pastaDownload, os.getenv('PROFILE_PATH'))
     
     sede = [texto for texto, var in sedes.items() if var.get()][0]
     bot.entrar(credentials[sede])
     
     bot.definir_data(dataGeracao)
+
+    time.sleep(5)
     
     for cliente in dados.itertuples():
         try:

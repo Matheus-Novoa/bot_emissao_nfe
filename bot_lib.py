@@ -10,7 +10,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By as sBy
 from selenium.common.exceptions import StaleElementReferenceException, ElementClickInterceptedException
-from config import profile_path
 import os
 
 
@@ -22,7 +21,7 @@ class Bot:
         self.desktopBot = DesktopBot()
 
 
-    def bot_setup(self, caminhoPastaDownload):
+    def bot_setup(self, caminhoPastaDownload, profile_path):
         self.caminhoPastaDownload = caminhoPastaDownload
 
         self.webBot.headless = False
