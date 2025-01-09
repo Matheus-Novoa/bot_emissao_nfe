@@ -1,23 +1,31 @@
 import pandas as pd
 from pathlib import Path
-from customtkinter import filedialog
 
 
-arquivo_planilha = Path(filedialog.askopenfilename())
-# arquivo_planilha = Path(r"C:\Users\novoa\OneDrive\Área de Trabalho\notas_MB\planilhas\zona_norte\escola_canadenseZN_ago24\Maple Bear Ago 24.xlsx")
-arquivo_progresso = arquivo_planilha.parent / 'progresso.log'
-arquivo_notas = arquivo_planilha.parent / 'num_notas.txt'
-dados = pd.read_excel(arquivo_planilha, 'dados', header=1, skipfooter=1)
 
-dados['Aluno'] = dados['Aluno'].apply(lambda i: i.split()[0])
+class Dados:
+    def __init__(self, arqPlanilha):
+        self.arqPlanilha = Path(arqPlanilha)
+        
+        self.arquivo_progresso = self.arqPlanilha.parent / 'progresso.log'
+        self.arquivo_notas = self.arqPlanilha.parent / 'num_notas.txt'
+        
+    def obter_dados(self):
+        self.dados = pd.read_excel(self.arqPlanilha, 'dados', header=1, skipfooter=1)
 
-dados.loc[dados['Turma'].str.contains('Y1|Year'), 'Acumulador'] = '2'
-dados['Acumulador'] = dados['Acumulador'].fillna('1')
+        self.dados['Aluno'] = self.dados['Aluno'].apply(lambda i: i.split()[0])
 
-dados['Mensalidade'] = dados['Mensalidade'].apply(lambda x: '{:0.2f}'.format(x).replace('.',','))
-dados['ValorTotal'] = dados['ValorTotal'].apply(lambda x: '{:0.2f}'.format(x).replace('.',','))
-dados['Alimentação'] = dados['Alimentação'].apply(lambda x: '{:0.2f}'.format(x).replace('.',','))
+        self.dados.loc[self.dados['Turma'].str.contains('Y1|Year'), 'Acumulador'] = '2'
+        self.dados['Acumulador'] = self.dados['Acumulador'].fillna('1')
 
+        self.dados['Mensalidade'] = self.dados['Mensalidade'].apply(lambda x: '{:0.2f}'.format(x).replace('.',','))
+        self.dados['ValorTotal'] = self.dados['ValorTotal'].apply(lambda x: '{:0.2f}'.format(x).replace('.',','))
+        self.dados['Alimentação'] = self.dados['Alimentação'].apply(lambda x: '{:0.2f}'.format(x).replace('.',','))
+
+        return self.dados
 
 if __name__ == '__main__':
-    print(dados)
+    arquivo_planilha = r"C:\Users\novoa\OneDrive\Área de Trabalho\notas_MB\planilhas\zona_norte\escola_canadenseZN_nov24\Maple Bear Nov 24.xlsx"
+    dados = Dados(arquivo_planilha)
+    df = dados.obter_dados()
+    print(list(df.itertuples())[0])

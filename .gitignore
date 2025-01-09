@@ -2,3 +2,5 @@
 .cache
 __pycache__/
 formatar_planilha.py
+teste.ipynb
+config.py
