@@ -11,12 +11,13 @@ import time
 def main(dataGeracao, pastaDownload, arqPlanilha, sedes):
 
     load_dotenv()
+
     dados = Dados(arqPlanilha)
+    dadosDf = dados.obter_dados()
 
     if dados.arquivo_progresso.exists():
         with open(dados.arquivo_progresso) as f:
             linha = int(f.read().split()[-1])
-        dadosDf = dados.obter_dados()
         dadosDf = dadosDf.iloc[linha:]
 
     data = datetime.strptime(dataGeracao, '%d%m%Y')
@@ -47,22 +48,22 @@ def main(dataGeracao, pastaDownload, arqPlanilha, sedes):
 
     time.sleep(5)
     
-    for cliente in dados.itertuples():
+    for cliente in dadosDf.itertuples():
         try:
             bot.preencher_campos(cliente, mes, ANO)
 
-            if sede == 'Matriz':
-                bot.gerar_nf('Logon do Token', '123456')
-            else:
-                bot.gerar_nf('Introduzir PIN', '1234')
+        #     if sede == 'Matriz':
+        #         bot.gerar_nf('Logon do Token', '123456')
+        #     else:
+        #         bot.gerar_nf('Introduzir PIN', '1234')
             
-            bot.baixar_nf(dados.arquivo_notas)
+        #     bot.baixar_nf(dados.arquivo_notas)
         except:
             with open(dados.arquivo_progresso, 'w') as f:
                 f.write(f'Erro {cliente.ResponsávelFinanceiro} linha {cliente.Index}')
                 raise
         ################### RETORNA E LIMPA OS CAMPOS ###################
-        bot.retornar(dados.arquivo_progresso)
+        # bot.retornar(dados.arquivo_progresso)
 
     bot.sair()
     bot.fechar_navegador()
