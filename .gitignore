@@ -1,4 +1,6 @@
 .env
 .cache
 __pycache__/
+*.pyc
 formatar_planilha.py
+teste.py
