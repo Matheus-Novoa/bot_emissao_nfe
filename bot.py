@@ -52,18 +52,18 @@ def main(dataGeracao, pastaDownload, arqPlanilha, sedes):
         try:
             bot.preencher_campos(cliente, mes, ANO)
 
-        #     if sede == 'Matriz':
-        #         bot.gerar_nf('Logon do Token', '123456')
-        #     else:
-        #         bot.gerar_nf('Introduzir PIN', '1234')
+            if sede == 'Matriz':
+                bot.gerar_nf('Logon do Token', '123456')
+            else:
+                bot.gerar_nf('Introduzir PIN', '1234')
             
-        #     bot.baixar_nf(dados.arquivo_notas)
+            bot.baixar_nf(dados.arquivo_notas)
         except:
             with open(dados.arquivo_progresso, 'w') as f:
                 f.write(f'Erro {cliente.ResponsávelFinanceiro} linha {cliente.Index}')
                 raise
         ################### RETORNA E LIMPA OS CAMPOS ###################
-        # bot.retornar(dados.arquivo_progresso)
+        bot.retornar(dados.arquivo_progresso)
 
     bot.sair()
     bot.fechar_navegador()

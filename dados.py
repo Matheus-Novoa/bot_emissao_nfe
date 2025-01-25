@@ -12,7 +12,7 @@ class Dados:
         
     def obter_dados(self):
         self.dados = pd.read_excel(self.arqPlanilha, 'dados', header=1, skipfooter=1)
-
+        
         self.dados['Aluno'] = self.dados['Aluno'].apply(lambda i: i.split()[0])
 
         self.dados.loc[self.dados['Turma'].str.contains('Y1|Year'), 'Acumulador'] = '2'
@@ -25,7 +25,7 @@ class Dados:
         return self.dados
 
 if __name__ == '__main__':
-    arquivo_planilha = r"C:\Users\novoa\OneDrive\Área de Trabalho\notas_MB\planilhas\zona_norte\escola_canadenseZN_nov24\Maple Bear Nov 24.xlsx"
+    arquivo_planilha = r"C:\Users\novoa\OneDrive\Área de Trabalho\MB_ZS_JAN\planilha\Numeração de Boletos_Zona Sul_2025_Jan.xlsx"
     dados = Dados(arquivo_planilha)
     df = dados.obter_dados()
-    print(list(df.itertuples())[0])
+    print(list(df.itertuples()))

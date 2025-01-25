@@ -22,7 +22,7 @@ class Bot:
 
 
     def bot_setup(self, caminhoPastaDownload, profile_path):
-        self.caminhoPastaDownload = caminhoPastaDownload
+        self.caminhoPastaDownload = caminhoPastaDownload.replace('/', '\\')
 
         self.webBot.headless = False
         self.webBot.browser = Browser.CHROME
