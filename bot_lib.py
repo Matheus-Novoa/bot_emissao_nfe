@@ -54,10 +54,15 @@ class Bot:
 
 
     def sair(self):
-        # Botão sair
-        self.webBot.find_element('//*[@id="identificacao"]/table/tbody/tr/td[2]/a/img', By.XPATH).click()
-        # Botão voltar para a página inicial
-        self.webBot.find_element('//*[@id="mensagem"]/div/p[4]/a', By.XPATH).click()
+        while True:
+            try:
+                # Botão sair
+                self.webBot.find_element('//*[@id="identificacao"]/table/tbody/tr/td[2]/a/img', By.XPATH).click()
+                # Botão voltar para a página inicial
+                self.webBot.find_element('//*[@id="mensagem"]/div/p[4]/a', By.XPATH).click()
+                break
+            except ElementClickInterceptedException:
+                continue
 
 
     def definir_data(self, dataGeracao):
@@ -184,7 +189,7 @@ class Bot:
             f.write('\n')
 
 
-    def retornar(self, arquivo_progresso):
+    def retornar(self):#, arquivo_progresso):
         while True:
             try:    
                 # botao_retorno
@@ -192,25 +197,32 @@ class Bot:
                                                 By.XPATH,
                                                 ensure_clickable=True,
                                                 ensure_visible=True).click()
-                
-                # botao_limpar_digitacao
-                botao_limpar_digitacao = self._wait.until(
-                    EC.element_to_be_clickable((sBy.XPATH, '//*[@id="form"]/input[3]'))
-                    )
-                self.webBot.wait(500)
-                botao_limpar_digitacao.click()
-                break
-            except ElementClickInterceptedException as err:
+            except ElementClickInterceptedException:
                 self.webBot.wait(500)
                 continue
-            except Exception as err:
-                with open(arquivo_progresso, 'w') as f:
-                    f.write(f'Erro após {self.dadoCliente.ResponsávelFinanceiro} linha {int(self.dadoCliente.Index) + 1}')
-                    raise err
+            # except Exception as err:
+            #     with open(arquivo_progresso, 'w') as f:
+            #         f.write(f'Erro após {self.dadoCliente.ResponsávelFinanceiro} linha {int(self.dadoCliente.Index) + 1}')
+            #         raise err
+                
+
+    def limpar_campos(self):
+        while True:
+            try:    
+                # botao_limpar_digitacao
+                botao_limpar_digitacao = self._wait.until(
+                    EC.element_to_be_clickable((sBy.NAME, 'form:j_id394'))
+                    )
+                botao_limpar_digitacao.click()
+                break
+            except ElementClickInterceptedException:
+                continue
                 
 
     def fechar_navegador(self):
         self.webBot.stop_browser()
+
+
 
 if __name__ == '__main__':
     ...
