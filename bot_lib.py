@@ -150,7 +150,7 @@ class Bot:
         self.webBot.find_element('//*[@id="form:valorServicos"]', By.XPATH).send_keys(dadoCliente.ValorTotal)
 
     
-    def gerar_nf(self, nomeJanela, senha):
+    def gerar_nf(self, nome_janela, senha):
         ################### DOWNLOAD NOTA ###################
         # botao_gerar_nfs
         self.webBot.find_element('//*[@id="form:bt_emitir_NFS-e"]', By.XPATH).click()
@@ -159,7 +159,14 @@ class Bot:
                             By.XPATH,
                             ensure_clickable=True).click()
         
-        nome_janela = nomeJanela
+        msg_erro = self.webBot.find_elements('//*[@id="mensagemErroAssinaturaEmissao"]/h1', 
+                                       By.XPATH, waiting_time=1000)
+        while msg_erro:
+            # botao_confirmar_geracao
+            self.webBot.find_element('//*[@id="appletAssinador:j_id766"]',
+                                     By.XPATH,
+                                     ensure_clickable=True).click()
+
         self.webBot.wait(500)
         janela = self.trazer_janela_para_frente(nome_janela)
         while janela == None:
@@ -188,15 +195,18 @@ class Bot:
             f.write(f'{num_nota} {self.dadoCliente.ResponsávelFinanceiro}')
             f.write('\n')
 
+        return num_nota
+
 
     def retornar(self):#, arquivo_progresso):
         while True:
             try:    
                 # botao_retorno
-                self.webBot.find_element('//*[@id="form:j_id9"]',
+                self.webBot.find_element('//*[@id="form:j_id9"]', 
                                                 By.XPATH,
                                                 ensure_clickable=True,
                                                 ensure_visible=True).click()
+                break
             except ElementClickInterceptedException:
                 self.webBot.wait(500)
                 continue
@@ -211,7 +221,7 @@ class Bot:
             try:    
                 # botao_limpar_digitacao
                 botao_limpar_digitacao = self._wait.until(
-                    EC.element_to_be_clickable((sBy.NAME, 'form:j_id394'))
+                    EC.element_to_be_clickable((sBy.XPATH, '//*[@id="form"]/input[3]'))
                     )
                 botao_limpar_digitacao.click()
                 break

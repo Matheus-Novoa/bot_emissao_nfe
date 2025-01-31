@@ -15,19 +15,7 @@ def main(dataGeracao, pastaDownload, arqPlanilha, sedes):
     dados = Dados(arqPlanilha)
     dadosDf = dados.obter_dados()
 
-    # if dados.arquivo_progresso.exists():
-    #     with open(dados.arquivo_progresso) as f:
-    #         linha = int(f.read().split()[-1])
-    #     dadosDf = dadosDf.iloc[linha:]
-
-    # Identificar o ponto de retomada: a primeira célula não nula
-    linha_comeco = dadosDf['Status'].last_valid_index()
-    if linha_comeco is None:
-        linha_comeco = 0  # Começa do início se não houver valores preenchidos
-    else:
-        linha_comeco += 1  # Retoma da próxima linha após a última processada
-    dadosDf = dadosDf.iloc[linha_comeco:]
-
+    df_afazer = dadosDf[dadosDf['Notas'].isna()]
 
     data = datetime.strptime(dataGeracao, '%d%m%Y')
     meses = {
@@ -56,34 +44,35 @@ def main(dataGeracao, pastaDownload, arqPlanilha, sedes):
         bot.entrar(credentials[sede])
     except:
         bot.sair()
+        bot.entrar(credentials[sede])
     
     bot.definir_data(dataGeracao)
 
     time.sleep(3)
     
-    for cliente in dadosDf.itertuples():
+    for cliente in df_afazer.itertuples():
         try:
             bot.preencher_campos(cliente, mes, ANO)
 
-            # if sede == 'Matriz':
-            #     bot.gerar_nf('Logon do Token', '123456')
-            # else:
-            #     bot.gerar_nf('Introduzir PIN', '1234')
+            if sede == 'Matriz':
+                bot.gerar_nf('Logon do Token', '123456')
+            else:
+                bot.gerar_nf('Introduzir PIN', '1234')
             
-            # bot.baixar_nf(dados.arquivo_notas)
+            num_nota = bot.baixar_nf(dados.arquivo_notas)
 
             # Caso o processamento seja bem-sucedido
-            dadosDf.at[cliente.Index, 'Status'] = 'OK'
+            df_afazer.at[cliente.Index, 'Notas'] = num_nota
         except:
-            dadosDf.at[cliente.Index, 'Status'] = 'ERRO'
+            # dadosDf.at[cliente.Index, 'Status'] = 'ERRO'
 
             with open(dados.arquivo_progresso, 'w') as f:
                 f.write(f'Erro {cliente.ResponsávelFinanceiro} linha {cliente.Index}')
                 raise
         finally:
-            dados.registra_numero_notas()#num_nota)
+            dados.registra_numero_notas(cliente.Index, num_nota)
         ################### RETORNA E LIMPA OS CAMPOS ###################
-        # bot.retornar(dados.arquivo_progresso)
+        bot.retornar()
         bot.limpar_campos()
 
     bot.sair()
@@ -91,7 +80,7 @@ def main(dataGeracao, pastaDownload, arqPlanilha, sedes):
 
 
 if __name__ == '__main__':
-    main('27012025',
-         r'C:\Users\novoa\OneDrive\Área de Trabalho\MB_ZS_JAN',
-         r"C:\Users\novoa\OneDrive\Área de Trabalho\MB_ZS_JAN\planilha\Numeração de Boletos_Zona Sul_2025_Jan.xlsx",
-         {'Matriz': False, 'Zona Sul': True})
+    main('31122024',
+         r'C:\Users\novoa\OneDrive\Área de Trabalho\notas_MB\NOTA_FICAL_ZN_MAPLE_BEAR\dezembro2024',
+         r"C:\Users\novoa\OneDrive\Área de Trabalho\notas_MB\planilhas\zona_norte\escola_canadenseZN_dez24\Maple Bear Dez 24.xlsx",
+         {'Matriz': True, 'Zona Sul': False})
