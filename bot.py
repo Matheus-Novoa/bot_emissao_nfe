@@ -72,9 +72,9 @@ def main(dataGeracao, pastaDownload, arqPlanilha, sedes):
                 raise
         finally:
             dados.registra_numero_notas(cliente.Index, num_nota)
-        ################### RETORNA E LIMPA OS CAMPOS ###################
-        bot.retornar()
-        bot.limpar_campos()
+            ################### RETORNA E LIMPA OS CAMPOS ###################
+            bot.retornar()
+            bot.limpar_campos()
 
     bot.sair()
     bot.fechar_navegador()
