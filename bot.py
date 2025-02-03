@@ -12,7 +12,12 @@ def main(dataGeracao, pastaDownload, arqPlanilha, sedes):
 
     load_dotenv()
 
-    dados = Dados(arqPlanilha)
+    # sede = [texto for texto, var in sedes.items() if var.get()][0]
+    sede = [texto for texto, var in sedes.items() if var][0] # apenas para teste
+
+    dados = Dados(arqPlanilha, sede)
+
+    dados.formata_planilha()
     dadosDf = dados.obter_dados()
 
     df_afazer = dadosDf[dadosDf['Notas'].isna()]
@@ -38,8 +43,6 @@ def main(dataGeracao, pastaDownload, arqPlanilha, sedes):
     bot = Bot()
     bot.bot_setup(pastaDownload, os.getenv('PROFILE_PATH'))
     
-    # sede = [texto for texto, var in sedes.items() if var.get()][0]
-    sede = [texto for texto, var in sedes.items() if var][0] # apenas para teste
     try:
         bot.entrar(credentials[sede])
     except:
@@ -64,8 +67,6 @@ def main(dataGeracao, pastaDownload, arqPlanilha, sedes):
             # Caso o processamento seja bem-sucedido
             df_afazer.at[cliente.Index, 'Notas'] = num_nota
         except:
-            # dadosDf.at[cliente.Index, 'Status'] = 'ERRO'
-
             with open(dados.arquivo_progresso, 'w') as f:
                 f.write(f'Erro {cliente.ResponsávelFinanceiro} linha {cliente.Index}')
                 raise

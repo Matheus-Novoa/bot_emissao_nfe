@@ -159,6 +159,9 @@ class Bot:
                             By.XPATH,
                             ensure_clickable=True).click()
         
+        # Gambiarra: o find_element["s"] retorna uma lista de elementos.
+        # Se o elemento não estiver na DOM, retorna um lista vazia.
+        # Necessário, pois o find_element (sem o "s") retorna um elemento mesmo se não estiver presente na DOM.
         msg_erro = self.webBot.find_elements('//*[@id="mensagemErroAssinaturaEmissao"]/h1', 
                                        By.XPATH, waiting_time=1000)
         while msg_erro:
@@ -167,7 +170,7 @@ class Bot:
                                      By.XPATH,
                                      ensure_clickable=True).click()
 
-        self.webBot.wait(500)
+        # self.webBot.wait(500)
         janela = self.trazer_janela_para_frente(nome_janela)
         while janela == None:
             self.webBot.wait(500)
