@@ -102,6 +102,13 @@ class Bot:
                 break
             except ElementClickInterceptedException:
                 continue
+        cliente_nao_cadastrado_msg = self.webBot.find_element('//div[@id="mensagem"]//h1/span', By.XPATH, waiting_time=1000)
+        
+        if cliente_nao_cadastrado_msg:
+            self._wait.until(
+                EC.element_to_be_clickable((sBy.XPATH, '//*[@id="form"]/input[@alt="Limpar Digitacao"]'))
+            ).click()
+            return False
 
         nome_responsavel_dados = unidecode(dadoCliente.ResponsávelFinanceiro.upper().strip())
         campo_razao_social = self.webBot.find_element('//*[@id="form:dnomeRazaoSocial"]',
@@ -148,6 +155,8 @@ class Bot:
         self.webBot.find_element('//*[@id="topo_aba3"]/a', By.XPATH).click()
         # campo_valor_total
         self.webBot.find_element('//*[@id="form:valorServicos"]', By.XPATH).send_keys(dadoCliente.ValorTotal)
+
+        return True
 
     
     def gerar_nf(self, nome_janela, senha):
@@ -224,7 +233,8 @@ class Bot:
             try:    
                 # botao_limpar_digitacao
                 botao_limpar_digitacao = self._wait.until(
-                    EC.element_to_be_clickable((sBy.XPATH, '//*[@id="form"]/input[3]'))
+                    EC.element_to_be_clickable((sBy.XPATH, '//*[@id="form"]/input[@alt="Limpar Digitacao"]'))
+                    # EC.element_to_be_clickable((sBy.XPATH, '//*[@id="form"]/input[3]'))
                     )
                 botao_limpar_digitacao.click()
                 break

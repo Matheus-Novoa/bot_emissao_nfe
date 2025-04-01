@@ -56,7 +56,7 @@ class Dados:
             resultado = self.dados_origem["ResponsávelFinanceiro"].apply(
                 lambda nome: pd.Series(self.encontrar_melhor_match(nome), index=["ResponsávelFinanceiro", "CPF"])
             )
-            self.dados_origem = self.dados_origem.drop(columns=["ResponsávelFinanceiro"]).join(resultado)
+            self.dados_origem = self.dados_origem.drop(columns=["ResponsávelFinanceiro", "CPF Responsável"]).join(resultado)
 
             with pd.ExcelWriter(self.arqPlanilha, mode="a", engine="openpyxl", if_sheet_exists="replace") as writer:
                 self.dados_origem.to_excel(writer, sheet_name="dados", index=False, startrow=1)
@@ -70,7 +70,7 @@ class Dados:
         
         self.dados['Aluno'] = self.dados['Aluno'].apply(lambda i: i.split()[0])
 
-        self.dados.loc[self.dados['Turma'].str.contains('Y1|Year'), 'Acumulador'] = '2'
+        self.dados.loc[self.dados['Turma'].str.contains('Y1|Y2|Year'), 'Acumulador'] = '2'
         self.dados['Acumulador'] = self.dados['Acumulador'].fillna('1')
 
         self.dados['Mensalidade'] = self.dados['Mensalidade'].apply(lambda x: '{:0.2f}'.format(x).replace('.',','))
@@ -96,9 +96,10 @@ class Dados:
 
 
 if __name__ == '__main__':
-    arquivo_planilha = r"C:\Users\novoa\OneDrive\Área de Trabalho\Maple Bear Dez 24.xlsx"
-    dados = Dados(arquivo_planilha)
-    # df = dados.obter_dados()
+    arquivo_planilha = r"C:\Users\novoa\OneDrive\Área de Trabalho\notas_MB\planilhas\zona_sul\escola_canadenseZS_fev25\Boletos_Zona Sul_2025_Fevereiro.xlsx"
+    dados = Dados(arquivo_planilha, 'zona_sul')
+    df = dados.obter_dados()
+    print(df)
     # print(list(df[df['Notas'].isna()].itertuples()))
     # print(list(df.itertuples()))
-    dados.formata_planilha()
+    # dados.formata_planilha()

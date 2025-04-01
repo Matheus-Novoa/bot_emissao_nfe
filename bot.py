@@ -12,8 +12,8 @@ def main(dataGeracao, pastaDownload, arqPlanilha, sedes):
 
     load_dotenv()
 
-    # sede = [texto for texto, var in sedes.items() if var.get()][0]
-    sede = [texto for texto, var in sedes.items() if var][0] # apenas para teste
+    sede = [texto for texto, var in sedes.items() if var.get()][0]
+    # sede = [texto for texto, var in sedes.items() if var][0] # apenas para teste
 
     dados = Dados(arqPlanilha, sede)
 
@@ -55,7 +55,9 @@ def main(dataGeracao, pastaDownload, arqPlanilha, sedes):
     
     for cliente in df_afazer.itertuples():
         try:
-            bot.preencher_campos(cliente, mes, ANO)
+            status = bot.preencher_campos(cliente, mes, ANO)
+            if not status:
+                continue
 
             if sede == 'Matriz':
                 bot.gerar_nf('Logon do Token', '123456')
@@ -71,17 +73,18 @@ def main(dataGeracao, pastaDownload, arqPlanilha, sedes):
                 f.write(f'Erro {cliente.ResponsávelFinanceiro} linha {cliente.Index}')
                 raise
         finally:
-            dados.registra_numero_notas(cliente.Index, num_nota)
-            ################### RETORNA E LIMPA OS CAMPOS ###################
-            bot.retornar()
-            bot.limpar_campos()
+            if status:
+                dados.registra_numero_notas(cliente.Index, num_nota)
+                ################### RETORNA E LIMPA OS CAMPOS ###################
+                bot.retornar()
+                bot.limpar_campos()
 
     bot.sair()
     bot.fechar_navegador()
 
 
 if __name__ == '__main__':
-    main('31122024',
-         r'C:\Users\novoa\OneDrive\Área de Trabalho\notas_MB\NOTA_FICAL_ZN_MAPLE_BEAR\dezembro2024',
-         r"C:\Users\novoa\OneDrive\Área de Trabalho\notas_MB\planilhas\zona_norte\escola_canadenseZN_dez24\Maple Bear Dez 24.xlsx",
-         {'Matriz': True, 'Zona Sul': False})
+    main('28022025',
+         r'C:/Users/novoa/OneDrive/Área de Trabalho/notas_MB/NOTA_FISCAL_ZS_MAPLE_BEAR/FEVEREIRO2025',
+         r"C:/Users/novoa/OneDrive/Área de Trabalho/notas_MB/planilhas/zona_sul/escola_canadenseZS_fev25/Boletos_Zona Sul_2025_Fevereiro.xlsx",
+         {'Matriz': False, 'Zona Sul': True})
