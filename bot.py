@@ -68,16 +68,17 @@ def main(dataGeracao, pastaDownload, arqPlanilha, sedes):
 
             # Caso o processamento seja bem-sucedido
             df_afazer.at[cliente.Index, 'Notas'] = num_nota
-        except:
+
+            dados.registra_numero_notas(cliente.Index, num_nota)
+            bot.retornar()
+        except Exception as error:
+            print(error)
             with open(dados.arquivo_progresso, 'w') as f:
                 f.write(f'Erro {cliente.ResponsávelFinanceiro} linha {cliente.Index}')
                 raise
         finally:
-            if status:
-                dados.registra_numero_notas(cliente.Index, num_nota)
-                ################### RETORNA E LIMPA OS CAMPOS ###################
-                bot.retornar()
-                bot.limpar_campos()
+            ################### RETORNA E LIMPA OS CAMPOS ###################
+            bot.limpar_campos()
 
     bot.sair()
     bot.fechar_navegador()

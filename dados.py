@@ -96,10 +96,10 @@ class Dados:
 
 
 if __name__ == '__main__':
-    arquivo_planilha = r"C:\Users\novoa\OneDrive\Área de Trabalho\notas_MB\planilhas\zona_sul\escola_canadenseZS_fev25\Boletos_Zona Sul_2025_Fevereiro.xlsx"
+    arquivo_planilha = r"C:\Users\novoa\OneDrive\Área de Trabalho\notas_MB\planilhas\zona_sul\escola_canadenseZS_mar25\Numeração de Boletos_Zona Sul_2025_Mar 25.xlsx"
     dados = Dados(arquivo_planilha, 'zona_sul')
-    df = dados.obter_dados()
-    print(df)
+    # df = dados.obter_dados()
+    # print(df)
     # print(list(df[df['Notas'].isna()].itertuples()))
     # print(list(df.itertuples()))
-    # dados.formata_planilha()
+    dados.formata_planilha()
