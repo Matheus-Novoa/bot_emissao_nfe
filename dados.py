@@ -2,6 +2,7 @@ import pandas as pd
 from pathlib import Path
 from openpyxl import load_workbook
 from difflib import get_close_matches
+from pyautogui import alert
 
 
 
@@ -34,7 +35,7 @@ class Dados:
         # Usa get_close_matches para encontrar o nome mais próximo.
         # n=1: retorna apenas a melhor correspondência.
         # cutoff=0.0: nenhum corte de similaridade; ajuste se necessário.
-        correspondencias = get_close_matches(nome, lista_nomes, n=1, cutoff=0.0)
+        correspondencias = get_close_matches(nome, lista_nomes, n=1, cutoff=0.90)
         
         if correspondencias:
             melhor_nome = correspondencias[0]
@@ -47,37 +48,50 @@ class Dados:
         return melhor_nome, cpf
     
     
-    def formata_planilha(self):
-        wb = load_workbook(self.arqPlanilha)
+    def formata_planilha(self, arqPlanilha):
+        wb = load_workbook(arqPlanilha)
 
         if not 'dados' in wb.sheetnames:
-            self.dados_origem = pd.read_excel(self.arqPlanilha, 'dados_origem', header=1, skipfooter=1)
+            self.dados_origem = pd.read_excel(arqPlanilha, 'dados_origem', header=1, skipfooter=1)
 
             resultado = self.dados_origem["ResponsávelFinanceiro"].apply(
                 lambda nome: pd.Series(self.encontrar_melhor_match(nome), index=["ResponsávelFinanceiro", "CPF"])
             )
-            self.dados_origem = self.dados_origem.drop(columns=["ResponsávelFinanceiro", "CPF Responsável"]).join(resultado)
+            self.dados_destino = self.dados_origem.drop(columns=["ResponsávelFinanceiro", "CPF"]).join(resultado)
 
-            with pd.ExcelWriter(self.arqPlanilha, mode="a", engine="openpyxl", if_sheet_exists="replace") as writer:
-                self.dados_origem.to_excel(writer, sheet_name="dados", index=False, startrow=1)
+            dados_faltantes = self.dados_destino['ResponsávelFinanceiro'].isna()
+            if dados_faltantes.any():
+                clientes_novos = self.dados_origem.loc[dados_faltantes, 'ResponsávelFinanceiro']
+                alert(title='Clientes não cadastrados encontrados',
+                        text='\n'.join(clientes_novos.to_list())
+                )
+                self.dados_destino.drop(clientes_novos.index, inplace=True)
+
+            with pd.ExcelWriter(arqPlanilha, mode="a", engine="openpyxl", if_sheet_exists="replace") as writer:
+                self.dados_destino.to_excel(writer, sheet_name="dados", index=False, startrow=1)
 
 
     def obter_dados(self):
-        self.dados = pd.read_excel(self.arqPlanilha, 'dados', header=1)#, skipfooter=1)
+        wb = load_workbook(self.arqPlanilha)
 
-        if 'Notas' not in self.dados.columns:
-            self.dados['Notas'] = None
-        
-        self.dados['Aluno'] = self.dados['Aluno'].apply(lambda i: i.split()[0])
+        if 'dados' in wb.sheetnames:
+            self.dados = pd.read_excel(self.arqPlanilha, 'dados', header=1)#, skipfooter=1)
 
-        self.dados.loc[self.dados['Turma'].str.contains('Y1|Y2|Year'), 'Acumulador'] = '2'
-        self.dados['Acumulador'] = self.dados['Acumulador'].fillna('1')
+            if 'Notas' not in self.dados.columns:
+                self.dados['Notas'] = None
+            
+            self.dados['Aluno'] = self.dados['Aluno'].apply(lambda i: i.split()[0])
 
-        self.dados['Mensalidade'] = self.dados['Mensalidade'].apply(lambda x: '{:0.2f}'.format(x).replace('.',','))
-        self.dados['ValorTotal'] = self.dados['ValorTotal'].apply(lambda x: '{:0.2f}'.format(x).replace('.',','))
-        self.dados['Alimentação'] = self.dados['Alimentação'].apply(lambda x: '{:0.2f}'.format(x).replace('.',','))
+            self.dados.loc[self.dados['Turma'].str.contains('Y1|Y2|Year'), 'Acumulador'] = '2'
+            self.dados['Acumulador'] = self.dados['Acumulador'].fillna('1')
 
-        return self.dados
+            self.dados['Mensalidade'] = self.dados['Mensalidade'].apply(lambda x: '{:0.2f}'.format(x).replace('.',','))
+            self.dados['ValorTotal'] = self.dados['ValorTotal'].apply(lambda x: '{:0.2f}'.format(x).replace('.',','))
+            self.dados['Alimentação'] = self.dados['Alimentação'].apply(lambda x: '{:0.2f}'.format(x).replace('.',','))
+
+            return self.dados
+        else:
+            return None
     
 
     def registra_numero_notas(self, index_df, num_nota):
@@ -96,7 +110,7 @@ class Dados:
 
 
 if __name__ == '__main__':
-    arquivo_planilha = r"C:\Users\novoa\OneDrive\Área de Trabalho\notas_MB\planilhas\zona_sul\escola_canadenseZS_mar25\Numeração de Boletos_Zona Sul_2025_Mar 25.xlsx"
+    arquivo_planilha = 'listagem_teste/teste.xlsx'
     dados = Dados(arquivo_planilha, 'zona_sul')
     # df = dados.obter_dados()
     # print(df)

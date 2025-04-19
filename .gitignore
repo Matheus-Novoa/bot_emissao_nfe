@@ -4,6 +4,7 @@ __pycache__/
 *.pyc
 formatar_planilha.py
 teste.py
+teste.ipynb
 .venv
 base
 listagem_teste
