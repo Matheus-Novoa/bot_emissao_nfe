@@ -11,6 +11,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By as sBy
 from selenium.common.exceptions import StaleElementReferenceException, ElementClickInterceptedException
 import os
+import re
 
 
 
@@ -201,7 +202,9 @@ class Bot:
                 continue
 
         self.webBot.wait(1000)
-        num_nota = self.webBot.get_last_created_file(self.caminhoPastaDownload).split(os.sep)[-1].split('.')[0][-4:]
+        arq_baixado = self.webBot.get_last_created_file(self.caminhoPastaDownload).split(os.sep)[-1].split('.')[0]
+        match = re.search(r'(\d{4})(0*)([1-9]\d*)', arq_baixado)
+        num_nota = match.group(3) if match else arq_baixado[-4:]
 
         with open(arquivo_notas, 'a') as f:
             f.write(f'{num_nota} {self.dadoCliente.ResponsávelFinanceiro}')

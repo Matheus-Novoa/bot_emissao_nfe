@@ -61,14 +61,16 @@ class Dados:
 
             dados_faltantes = self.dados_destino['ResponsávelFinanceiro'].isna()
             if dados_faltantes.any():
-                clientes_novos = self.dados_origem.loc[dados_faltantes, 'ResponsávelFinanceiro']
+                clientes_novos = self.dados_origem.loc[dados_faltantes]
                 alert(title='Clientes não cadastrados encontrados',
-                        text='\n'.join(clientes_novos.to_list())
+                        text='\n'.join(clientes_novos['ResponsávelFinanceiro'].to_list())
                 )
                 self.dados_destino.drop(clientes_novos.index, inplace=True)
 
             with pd.ExcelWriter(arqPlanilha, mode="a", engine="openpyxl", if_sheet_exists="replace") as writer:
                 self.dados_destino.to_excel(writer, sheet_name="dados", index=False, startrow=1)
+                if clientes_novos:
+                    clientes_novos.to_excel(writer, sheet_name="clientes_novos", index=False)
 
 
     def obter_dados(self):
