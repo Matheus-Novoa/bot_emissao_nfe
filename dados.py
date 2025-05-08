@@ -35,7 +35,7 @@ class Dados:
         # Usa get_close_matches para encontrar o nome mais próximo.
         # n=1: retorna apenas a melhor correspondência.
         # cutoff=0.0: nenhum corte de similaridade; ajuste se necessário.
-        correspondencias = get_close_matches(nome, lista_nomes, n=1, cutoff=0.90)
+        correspondencias = get_close_matches(nome, lista_nomes, n=1, cutoff=0.85)
         
         if correspondencias:
             melhor_nome = correspondencias[0]
@@ -69,7 +69,7 @@ class Dados:
 
             with pd.ExcelWriter(arqPlanilha, mode="a", engine="openpyxl", if_sheet_exists="replace") as writer:
                 self.dados_destino.to_excel(writer, sheet_name="dados", index=False, startrow=1)
-                if clientes_novos:
+                if not clientes_novos.empty:
                     clientes_novos.to_excel(writer, sheet_name="clientes_novos", index=False)
 
 
@@ -112,10 +112,10 @@ class Dados:
 
 
 if __name__ == '__main__':
-    arquivo_planilha = 'listagem_teste/teste.xlsx'
-    dados = Dados(arquivo_planilha, 'zona_sul')
+    arquivo_planilha = r"C:\Users\novoa\OneDrive\Área de Trabalho\notas_MB\planilhas\zona_norte\escola_canadenseZN_jan25\Maple Bear Jan 25 filtrada.xlsx"
+    dados = Dados(arquivo_planilha, 'Matriz')
     # df = dados.obter_dados()
     # print(df)
     # print(list(df[df['Notas'].isna()].itertuples()))
     # print(list(df.itertuples()))
-    dados.formata_planilha()
+    dados.formata_planilha(arquivo_planilha)

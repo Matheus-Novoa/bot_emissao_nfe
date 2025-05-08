@@ -100,12 +100,17 @@ zonaSulCheck = ctk.CTkCheckBox(frame_controles,
 
 checkbox_data = {'Matriz': matriz, 'Zona Sul': zonaSul}
 #------------------------ Formatar Planilha ------------------------
-dados_planilha = Dados(arqPlanilha=arqPlanilha.get(), sede=checkbox_data)
+
+def botao_formatar_funcao():
+    sede = [texto for texto, var in checkbox_data.items() if var.get()][0]
+    dados_planilha = Dados(arqPlanilha=arqPlanilha.get(), sede=sede)
+    dados_planilha.formata_planilha(arqPlanilha.get())
+
 botao_formatar = ctk.CTkButton(
     frame_controles,
     text='Formatar Planilha',
     width=120,
-    command=lambda: dados_planilha.formata_planilha(arqPlanilha.get())
+    command=botao_formatar_funcao
 )
 matrizCheck.grid(row=0, column=0, padx=(10, 5), pady=0, sticky="w")
 zonaSulCheck.grid(row=0, column=1, padx=5, pady=0, sticky="w")
