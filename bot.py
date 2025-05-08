@@ -19,7 +19,7 @@ def main(dataGeracao, pastaDownload, arqPlanilha, sedes):
 
     # dados.formata_planilha()
     dadosDf = dados.obter_dados()
-    if not dadosDf:
+    if dadosDf.empty:
         raise('Planilha original não formatada. Realize a formatação antes de executar o programa.')
 
     df_afazer = dadosDf[dadosDf['Notas'].isna()]
