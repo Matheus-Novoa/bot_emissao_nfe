@@ -60,6 +60,7 @@ class Dados:
             self.dados_destino = self.dados_origem.drop(columns=["ResponsávelFinanceiro", "CPF"]).join(resultado)
 
             dados_faltantes = self.dados_destino['ResponsávelFinanceiro'].isna()
+            clientes_novos = pd.DataFrame()
             if dados_faltantes.any():
                 clientes_novos = self.dados_origem.loc[dados_faltantes]
                 alert(title='Clientes não cadastrados encontrados',

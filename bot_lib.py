@@ -29,15 +29,17 @@ class Bot:
         self.webBot.browser = Browser.CHROME
         self.webBot.driver_path = ChromeDriverManager().install()
 
-        def_options = default_options(
-            user_data_dir=profile_path,  # Inform the profile path that wants to start the browser
-            download_folder_path=self.caminhoPastaDownload
-        ) 
-        def_options.add_argument('–profile-directory=Default')
+        temp_user_data_dir = os.path.join(os.getcwd(), 'temp_chrome_data')
+        os.makedirs(temp_user_data_dir, exist_ok=True)
+        
+        def_options = default_options(download_folder_path=self.caminhoPastaDownload)
+        def_options.add_argument(f'--user-data-dir={temp_user_data_dir}')
+        def_options.add_argument("--no-sandbox")
+        def_options.add_argument('--disable-dev-shm-usage')
+        
         self.webBot.options = def_options
         
         self.webBot.browse("https://nfe.portoalegre.rs.gov.br")
-
         self.webBot.maximize_window()
 
     
@@ -94,7 +96,7 @@ class Bot:
         ################### CPF ###################
         while True:
             try:
-                self._wait = WebDriverWait(self.webBot.driver, 15)
+                self._wait = WebDriverWait(self.webBot.driver, 60)
                 campo_cpf = self._wait.until(EC.element_to_be_clickable((sBy.XPATH, '//*[@id="form:numDocumento"]')))
                 campo_cpf.click()
                 campo_cpf.send_keys(dadoCliente.CPF)
@@ -201,8 +203,11 @@ class Bot:
                 # print('Esperando o carregamento da página de downloads...')
                 continue
 
-        self.webBot.wait(1000)
-        arq_baixado = self.webBot.get_last_created_file(self.caminhoPastaDownload).split(os.sep)[-1].split('.')[0]
+        arq_baixado = None
+        while not arq_baixado:
+            self.webBot.wait(1000)
+            arq_baixado = self.webBot.get_last_created_file(self.caminhoPastaDownload).split(os.sep)[-1].split('.')[0]
+
         match = re.search(r'(\d{4})(0*)([1-9]\d*)', arq_baixado)
         num_nota = match.group(3) if match else arq_baixado[-4:]
 
