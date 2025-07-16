@@ -62,7 +62,7 @@ def main(dataGeracao, pastaDownload, arqPlanilha, sedes):
                 continue
 
             if sede == 'Matriz':
-                bot.gerar_nf('Logon do Token', '123456')
+                bot.gerar_nf('Logon do Token', '123456', 5)
             else:
                 bot.gerar_nf('Introduzir PIN', '1234')
             

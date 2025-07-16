@@ -162,7 +162,7 @@ class Bot:
         return True
 
     
-    def gerar_nf(self, nome_janela, senha):
+    def gerar_nf(self, nome_janela, senha, indice_campo_senha):
         ################### DOWNLOAD NOTA ###################
         # botao_gerar_nfs
         self.webBot.find_element('//*[@id="form:bt_emitir_NFS-e"]', By.XPATH).click()
@@ -177,18 +177,22 @@ class Bot:
         msg_erro = self.webBot.find_elements('//*[@id="mensagemErroAssinaturaEmissao"]/h1', 
                                        By.XPATH, waiting_time=1000)
         while msg_erro:
+            print('\nErro ao gerar NFS-e. Tentando novamente...\n')
             # botao_confirmar_geracao
             self.webBot.find_element('//*[@id="appletAssinador:j_id766"]',
                                      By.XPATH,
                                      ensure_clickable=True).click()
+            msg_erro = self.webBot.find_elements('//*[@id="mensagemErroAssinaturaEmissao"]/h1', 
+                                       By.XPATH, waiting_time=1000)
 
-        # self.webBot.wait(500)
         janela = self.trazer_janela_para_frente(nome_janela)
         while janela == None:
             self.webBot.wait(500)
             janela = self.trazer_janela_para_frente(nome_janela)
 
-        self.desktopBot.kb_type(senha)
+        janela_controle = janela.wrapper_object()
+        campo_senha = janela_controle.children()[indice_campo_senha]
+        campo_senha.type_keys(senha, with_spaces=False)
         self.desktopBot.enter()
 
 
