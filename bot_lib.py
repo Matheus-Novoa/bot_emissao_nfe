@@ -103,7 +103,7 @@ class Bot:
                 # botao_lupa
                 self.webBot.find_element('//*[@id="form:btAutoCompleteTomador"]', By.XPATH).click()
                 break
-            except ElementClickInterceptedException:
+            except:
                 continue
         cliente_nao_cadastrado_msg = self.webBot.find_element('//div[@id="mensagem"]//h1/span', By.XPATH, waiting_time=1000)
         
@@ -227,7 +227,7 @@ class Bot:
                                                 ensure_clickable=True,
                                                 ensure_visible=True).click()
                 break
-            except ElementClickInterceptedException:
+            except:
                 self.webBot.wait(500)
                 continue
             # except Exception as err:

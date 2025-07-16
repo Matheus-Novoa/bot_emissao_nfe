@@ -113,10 +113,10 @@ class Dados:
 
 
 if __name__ == '__main__':
-    arquivo_planilha = r"C:\Users\novoa\OneDrive\Área de Trabalho\notas_MB\planilhas\zona_norte\escola_canadenseZN_fev25\Maple Bear Fev 25.xlsx"
-    dados = Dados(arquivo_planilha, 'Matriz')
-    # df = dados.obter_dados()
-    # print(df)
+    arquivo_planilha = r"C:\Users\novoa\OneDrive\Área de Trabalho\notas_MB\planilhas\zona_sul\escola_canadenseZS_jun25\Numeração de Boletos_Zona Sul_2025_06 2025.xlsx"
+    dados = Dados(arquivo_planilha, 'Zona Sul')
+    df = dados.obter_dados()
+    print(df)
     # print(list(df[df['Notas'].isna()].itertuples()))
     # print(list(df.itertuples()))
-    dados.formata_planilha(arquivo_planilha)
+    # dados.formata_planilha(arquivo_planilha)
