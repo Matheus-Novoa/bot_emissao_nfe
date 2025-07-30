@@ -64,7 +64,7 @@ def main(dataGeracao, pastaDownload, arqPlanilha, sedes):
             if sede == 'Matriz':
                 bot.gerar_nf('Logon do Token', '123456', 5)
             else:
-                bot.gerar_nf('Introduzir PIN', '1234')
+                bot.gerar_nf('Introduzir PIN', '1234', 2)
             
             num_nota = bot.baixar_nf(dados.arquivo_notas)
 
