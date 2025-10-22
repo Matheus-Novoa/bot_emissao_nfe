@@ -69,7 +69,7 @@ class Bot:
 
 
     def definir_data(self, dataGeracao):
-        self.webBot.find_element('//*[@id="nav"]/div[1]/a/img', By.XPATH).click()
+        self.webBot.find_element('//*[@id="menu:j_id8"]/div[@class="itemMenu"]', By.XPATH).click()
         self.webBot.wait(1000)
         # campo_geracao
         self.webBot.find_element('//*[@id="MesReferenciaModalPanelSubview:formMesReferencia:dtCompetencia"]',
@@ -167,9 +167,12 @@ class Bot:
         # botao_gerar_nfs
         self.webBot.find_element('//*[@id="form:bt_emitir_NFS-e"]', By.XPATH).click()
         # botao_confirmar_geracao
-        self.webBot.find_element('//*[@id="appletAssinador:j_id766"]',
-                            By.XPATH,
-                            ensure_clickable=True).click()
+        botao_confirmar_geracao = self.webBot.find_element(
+            '//*[@class="botoes" and starts-with(@id, "appletAssinador:")]',
+            By.XPATH,
+            ensure_clickable=True
+        )
+        botao_confirmar_geracao.click()
         
         # Gambiarra: o find_element["s"] retorna uma lista de elementos.
         # Se o elemento não estiver na DOM, retorna um lista vazia.
@@ -178,10 +181,7 @@ class Bot:
                                        By.XPATH, waiting_time=1000)
         while msg_erro:
             print('\nErro ao gerar NFS-e. Tentando novamente...\n')
-            # botao_confirmar_geracao
-            self.webBot.find_element('//*[@id="appletAssinador:j_id766"]',
-                                     By.XPATH,
-                                     ensure_clickable=True).click()
+            botao_confirmar_geracao.click()
             msg_erro = self.webBot.find_elements('//*[@id="mensagemErroAssinaturaEmissao"]/h1', 
                                        By.XPATH, waiting_time=1000)
 
@@ -204,7 +204,6 @@ class Bot:
                 botao_download.click()
                 break
             except Exception:
-                # print('Esperando o carregamento da página de downloads...')
                 continue
 
         arq_baixado = None
@@ -222,7 +221,7 @@ class Bot:
         return num_nota
 
 
-    def retornar(self):#, arquivo_progresso):
+    def retornar(self):
         while True:
             try:    
                 # botao_retorno
@@ -234,10 +233,6 @@ class Bot:
             except:
                 self.webBot.wait(500)
                 continue
-            # except Exception as err:
-            #     with open(arquivo_progresso, 'w') as f:
-            #         f.write(f'Erro após {self.dadoCliente.ResponsávelFinanceiro} linha {int(self.dadoCliente.Index) + 1}')
-            #         raise err
                 
 
     def limpar_campos(self):
